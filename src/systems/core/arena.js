@@ -10,7 +10,7 @@
 
 import { ARENAMqttConsole, ARENAUtils } from '../../utils';
 import ARENAWebARUtils from '../webar';
-import { ARENA_EVENTS, JITSI_EVENTS } from '../../constants';
+import { ARENA_EVENTS } from '../../constants';
 import RuntimeMngr from './runtime-mngr';
 
 AFRAME.registerSystem('arena-scene', {
@@ -70,7 +70,6 @@ AFRAME.registerSystem('arena-scene', {
 
         this.events = sceneEl.systems['arena-event-manager'];
         this.health = sceneEl.systems['arena-health-ui'];
-        this.jitsi = sceneEl.systems['arena-jitsi'];
 
         window.ARENA = this; // alias to window for easy access
 
@@ -123,10 +122,6 @@ AFRAME.registerSystem('arena-scene', {
                     });
                 }
             }
-        });
-        sceneEl.addEventListener(JITSI_EVENTS.DOMINANT_SPEAKER_CHANGED, (e) => {
-            const speaker = !e.detail.id || e.detail.id === this.idTag; // self is speaker
-            this.showEchoDisplayName(speaker);
         });
     },
 
@@ -286,15 +281,6 @@ AFRAME.registerSystem('arena-scene', {
         let displayName = localStorage.getItem('display_name');
         if (!displayName) displayName = decodeURI(this.userName);
         return displayName;
-    },
-
-    /**
-     * Checks loaded MQTT/Jitsi token for Jitsi video conference permission.
-     * @return {boolean} True if the user has permission to stream audio/video in this scene.
-     */
-    isJitsiPermitted() {
-        if (this.isBuild3dEnabled()) return false; // build3d is used on a new page
-        return !!this.mqttToken.token_payload.room;
     },
 
     /**
