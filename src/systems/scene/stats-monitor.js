@@ -8,7 +8,7 @@
 
 /* global AFRAME, ARENA */
 import { ARENAUtils } from '../../utils';
-import { JITSI_EVENTS } from '../../constants';
+
 
 AFRAME.registerComponent('stats-monitor', {
     schema: {
@@ -26,8 +26,6 @@ AFRAME.registerComponent('stats-monitor', {
         const { sceneEl } = el;
 
         this.tick = AFRAME.utils.throttleTick(this.tick, 5000, this);
-
-        this.jitsiStatsLocalCallback = this.jitsiStatsLocalCallback.bind(this);
 
         this.registerListeners();
         if (!data.enabled) {
@@ -53,8 +51,6 @@ AFRAME.registerComponent('stats-monitor', {
         const { el } = this;
 
         const { sceneEl } = el;
-
-        sceneEl.addEventListener(JITSI_EVENTS.STATS_LOCAL, this.jitsiStatsLocalCallback);
     },
 
     unregisterListeners() {
@@ -62,7 +58,7 @@ AFRAME.registerComponent('stats-monitor', {
 
         const { sceneEl } = el;
 
-        sceneEl.removeEventListener(JITSI_EVENTS.STATS_LOCAL, this.jitsiStatsLocalCallback);
+
     },
 
     /**
@@ -102,15 +98,8 @@ AFRAME.registerComponent('stats-monitor', {
 
         // publish to mqtt debug channel the stats
         if (ARENA && ARENA.params.confstats) {
-            if (ARENA && ARENA.jitsi) {
+            if (ARENA) {
                 const perfStats = {
-                    jitsiStats: {
-                        arenaId: ARENA.idTag,
-                        jitsiId: ARENA.jitsi.jitsiId,
-                        renderFps: this.fps,
-                        requestAnimationFrame: this.raf,
-                        stats: this.callStats,
-                    },
                 };
                 if (window.performance && window.performance.memory) {
                     perfStats.jitsiStats.usedJSHeapSize = this.usedJSHeapSize;
