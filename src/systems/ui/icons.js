@@ -104,7 +104,7 @@ AFRAME.registerSystem('arena-side-menu-ui', {
         if (!data.enabled) return;
 
         this.arena = sceneEl.systems['arena-scene'];
-        this.jitsi = sceneEl.systems['arena-jitsi'];
+        //this.jitsi = sceneEl.systems['arena-jitsi'];
 
         this.iconsDiv = document.getElementById('side-menu');
         this.iconsDiv.parentElement.classList.remove('d-none');
@@ -136,7 +136,7 @@ AFRAME.registerSystem('arena-side-menu-ui', {
         this.onLogoutButtonClick = this.onLogoutButtonClick.bind(this);
         this.onAdditionalSettingsButtonClick = this.onAdditionalSettingsButtonClick.bind(this);
 
-        const jitsiPermitted = this.arena.isJitsiPermitted();
+        //const jitsiPermitted = this.arena.isJitsiPermitted();
         const usersPermitted = this.arena.isUsersPermitted();
 
         // Create audio button
@@ -163,10 +163,10 @@ AFRAME.registerSystem('arena-side-menu-ui', {
         if (data.avButtonEnabled) {
             this.avButton = createIconButton('options', this.avButtonText, this.onAVButtonClick);
 
-            if (jitsiPermitted) {
+            /*if (jitsiPermitted) {
                 this._buttonList[this.buttons.AVSETTINGS] = this.avButton;
                 this.iconsDiv.appendChild(this.avButton);
-            }
+            }*/
         }
 
         // Create face tracking button
@@ -213,11 +213,11 @@ AFRAME.registerSystem('arena-side-menu-ui', {
             this.screenshareButton.style.display = 'none';
             this.settingsButtons.push(this.screenshareButton);
 
-            if (jitsiPermitted && !ARENA.utils.isMobile()) {
+            /*if (jitsiPermitted && !ARENA.utils.isMobile()) {
                 // no screenshare on mobile - doesn't work
                 this._buttonList[this.buttons.SCREENSHARE] = this.screenshareButton;
                 this.iconsDiv.appendChild(this.screenshareButton);
-            }
+            }*/
         }
 
         // Create logout button
@@ -439,7 +439,7 @@ AFRAME.registerSystem('arena-side-menu-ui', {
         };
     },
 
-    onAudioButtonClick() {
+    /*onAudioButtonClick() {
         if (!this.jitsi.hasAudio) {
             // toggled
             this.jitsi
@@ -498,7 +498,7 @@ AFRAME.registerSystem('arena-side-menu-ui', {
                 });
         }
     },
-
+*/
     async onAvatarButtonClick() {
         const { el } = this;
 
@@ -633,11 +633,11 @@ AFRAME.registerSystem('arena-side-menu-ui', {
 
                 const screenshareWindow = window.open('./screenshare', '_blank');
                 screenshareWindow.params = {
-                    connectOptions: this.jitsi.connectOptions,
-                    appID: this.jitsi.data.arenaAppId,
+                    //connectOptions: this.jitsi.connectOptions,
+                    //appID: this.jitsi.data.arenaAppId,
                     token: this.arena.mqttToken,
                     screenSharePrefix: this.jitsi.data.screensharePrefix,
-                    conferenceName: this.jitsi.conferenceName,
+                    //conferenceName: this.jitsi.conferenceName,
                     displayName: cameraEl.getAttribute('arena-camera').displayName,
                     camName: this.arena.camName,
                     objectIds: objectIds.join(),

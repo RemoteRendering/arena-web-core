@@ -26,7 +26,7 @@ AFRAME.registerSystem('arena-av-setup', {
 
         const { sceneEl } = el;
         this.arena = sceneEl.systems['arena-scene'];
-        this.jitsi = sceneEl.systems['arena-jitsi'];
+        //this.jitsi = sceneEl.systems['arena-jitsi'];
 
         this.show = this.show.bind(this);
         this.getDevices = this.getDevices.bind(this);
@@ -107,16 +107,16 @@ AFRAME.registerSystem('arena-av-setup', {
             this.setupAVCallback = callback;
         }
 
-        this.jitsi.prevVideoUnmuted = this.jitsi.hasVideo;
-        this.jitsi.prevAudioUnmuted = this.jitsi.hasAudio;
+        //this.jitsi.prevVideoUnmuted = this.jitsi.hasVideo;
+        //this.jitsi.prevAudioUnmuted = this.jitsi.hasAudio;
         const sideMenu = this.el.sceneEl.systems['arena-side-menu-ui'];
-        if (this.jitsi.hasVideo) {
+        /*if (this.jitsi.hasVideo) {
             sideMenu.clickButton(sideMenu.buttons.VIDEO);
         }
         if (this.jitsi.hasAudio) {
             sideMenu.clickButton(sideMenu.buttons.AUDIO);
         }
-
+*/
         this.setupPanel.classList.remove('d-none');
         if (localStorage.getItem('display_name')) {
             this.displayName.value = localStorage.getItem('display_name');
