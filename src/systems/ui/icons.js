@@ -62,26 +62,11 @@ AFRAME.registerSystem('arena-side-menu-ui', {
     schema: {
         enabled: { type: 'boolean', default: true },
 
-        audioButtonEnabled: { type: 'boolean', default: true },
-        audioButtonText: { type: 'string', default: 'Microphone on/off.' },
-
-        videoButtonEnabled: { type: 'boolean', default: true },
-        videoButtonText: { type: 'string', default: 'Camera on/off. You appear as a video box.' },
-
-        avButtonEnabled: { type: 'boolean', default: true },
-        avButtonText: { type: 'string', default: 'Change A/V options.' },
-
-        avatarButtonEnabled: { type: 'boolean', default: true },
-        avatarButtonText: { type: 'string', default: 'Face-recognition on/off. You appear as a 3d-animated face.' },
-
         speedButtonEnabled: { type: 'boolean', default: true },
         speedButtonText: { type: 'string', default: 'Set movement speed.' },
 
         flyingButtonEnabled: { type: 'boolean', default: true },
         flyingButtonText: { type: 'string', default: 'Flying on/off.' },
-
-        screenshareButtonEnabled: { type: 'boolean', default: true },
-        screenshareButtonText: { type: 'string', default: 'Share your screen in a new window.' },
 
         logoutButtonEnabled: { type: 'boolean', default: true },
         logoutButtonText: { type: 'string', default: 'Sign out of the this.arena.' },
@@ -104,16 +89,12 @@ AFRAME.registerSystem('arena-side-menu-ui', {
         if (!data.enabled) return;
 
         this.arena = sceneEl.systems['arena-scene'];
-        this.jitsi = sceneEl.systems['arena-jitsi'];
 
         this.iconsDiv = document.getElementById('side-menu');
         this.iconsDiv.parentElement.classList.remove('d-none');
 
         // button names, to be used by other modules
         this.buttons = {
-            AUDIO: 'audio',
-            VIDEO: 'video',
-            AVATAR: 'avatar',
             SPEED: 'speed',
             FLYING: 'fly',
             SCREENSHARE: 'screenshare',
@@ -126,60 +107,12 @@ AFRAME.registerSystem('arena-side-menu-ui', {
 
         this.settingsButtons = [];
 
-        this.onAudioButtonClick = this.onAudioButtonClick.bind(this);
-        this.onVideoButtonClick = this.onVideoButtonClick.bind(this);
-        this.onAVButtonClick = this.onAVButtonClick.bind(this);
-        this.onAvatarButtonClick = this.onAvatarButtonClick.bind(this);
+       
+    
         this.onSpeedButtonClick = this.onSpeedButtonClick.bind(this);
         this.onFlyingButtonClick = this.onFlyingButtonClick.bind(this);
-        this.onScreenshareButtonClick = this.onScreenshareButtonClick.bind(this);
         this.onLogoutButtonClick = this.onLogoutButtonClick.bind(this);
         this.onAdditionalSettingsButtonClick = this.onAdditionalSettingsButtonClick.bind(this);
-
-        const jitsiPermitted = this.arena.isJitsiPermitted();
-        const usersPermitted = this.arena.isUsersPermitted();
-
-        // Create audio button
-        if (data.audioButtonEnabled) {
-            this.audioButton = createIconButton('audio-off', data.audioButtonText, this.onAudioButtonClick);
-
-            if (jitsiPermitted) {
-                this._buttonList[this.buttons.AUDIO] = this.audioButton;
-                this.iconsDiv.appendChild(this.audioButton);
-            }
-        }
-
-        // Create video button
-        if (data.videoButtonEnabled) {
-            this.videoButton = createIconButton('video-off', data.videoButtonText, this.onVideoButtonClick);
-
-            if (jitsiPermitted) {
-                this._buttonList[this.buttons.VIDEO] = this.videoButton;
-                this.iconsDiv.appendChild(this.videoButton);
-            }
-        }
-
-        // Create AV Settings button
-        if (data.avButtonEnabled) {
-            this.avButton = createIconButton('options', this.avButtonText, this.onAVButtonClick);
-
-            if (jitsiPermitted) {
-                this._buttonList[this.buttons.AVSETTINGS] = this.avButton;
-                this.iconsDiv.appendChild(this.avButton);
-            }
-        }
-
-        // Create face tracking button
-        if (data.avatarButtonEnabled) {
-            this.avatarButton = createIconButton('avatar-off', data.avatarButtonText, this.onAvatarButtonClick);
-            this.avatarButton.style.display = 'none';
-            this.settingsButtons.push(this.avatarButton);
-
-            if (usersPermitted && !ARENA.utils.isMobile()) {
-                this._buttonList[this.buttons.AVATAR] = this.avatarButton;
-                this.iconsDiv.appendChild(this.avatarButton); // no avatar on mobile - face model is too large
-            }
-        }
 
         // Create speed button
         if (data.speedButtonEnabled) {
@@ -201,23 +134,6 @@ AFRAME.registerSystem('arena-side-menu-ui', {
 
             this._buttonList[this.buttons.FLYING] = this.flyingButton;
             this.iconsDiv.appendChild(this.flyingButton);
-        }
-
-        // Create screenshare button
-        if (data.screenshareButtonEnabled) {
-            this.screenshareButton = createIconButton(
-                'screen-on',
-                data.screenshareButtonText,
-                this.onScreenshareButtonClick
-            );
-            this.screenshareButton.style.display = 'none';
-            this.settingsButtons.push(this.screenshareButton);
-
-            if (jitsiPermitted && !ARENA.utils.isMobile()) {
-                // no screenshare on mobile - doesn't work
-                this._buttonList[this.buttons.SCREENSHARE] = this.screenshareButton;
-                this.iconsDiv.appendChild(this.screenshareButton);
-            }
         }
 
         // Create logout button
@@ -439,107 +355,6 @@ AFRAME.registerSystem('arena-side-menu-ui', {
         };
     },
 
-    onAudioButtonClick() {
-        if (!this.jitsi.hasAudio) {
-            // toggled
-            this.jitsi
-                .unmuteAudio()
-                .then(() => {
-                    this.audioButton.childNodes[0].style.backgroundImage = "url('src/systems/ui/images/audio-on.png')";
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        } else {
-            this.jitsi
-                .muteAudio()
-                .then(() => {
-                    this.audioButton.childNodes[0].style.backgroundImage = "url('src/systems/ui/images/audio-off.png')";
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        }
-    },
-
-    onVideoButtonClick() {
-        const { el } = this;
-
-        const { sceneEl } = el;
-
-        if (!this.jitsi.hasVideo) {
-            // toggled
-            if (sceneEl.is('vr-mode') || sceneEl.is('ar-mode')) return;
-
-            this.jitsi
-                .startVideo()
-                .then(() => {
-                    this.videoButton.childNodes[0].style.backgroundImage = "url('src/systems/ui/images/video-on.png')";
-                    this.avatarButton.childNodes[0].style.backgroundImage =
-                        "url('src/systems/ui/images/avatar-off.png')";
-                    this.jitsi.showVideo();
-                    const faceTracker = document.querySelector('a-scene').systems['face-tracking'];
-                    if (faceTracker !== undefined && faceTracker.isRunning()) {
-                        faceTracker.stop();
-                    }
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        } else {
-            this.videoButton.childNodes[0].style.backgroundImage = "url('src/systems/ui/images/video-off.png')";
-            this.jitsi
-                .stopVideo()
-                .then(() => {
-                    this.jitsi.hideVideo();
-                })
-                .catch((err) => {
-                    console.warn(err);
-                });
-        }
-    },
-
-    async onAvatarButtonClick() {
-        const { el } = this;
-
-        const { sceneEl } = el;
-
-        if (sceneEl.is('vr-mode') || sceneEl.is('ar-mode')) return;
-
-        // dynamically import face tracking module
-        let faceTracker = document.querySelector('a-scene').systems['face-tracking'];
-        if (faceTracker === undefined) {
-            await import('../face-tracking/index');
-            faceTracker = document.querySelector('a-scene').systems['face-tracking'];
-            if (!faceTracker) return;
-        }
-
-        if (!faceTracker.isRunning()) {
-            // toggled
-            faceTracker.run().then(() => {
-                this.avatarButton.childNodes[0].style.backgroundImage = "url('src/systems/ui/images/avatar-on.png')";
-                this.jitsi.stopVideo().then(() => {
-                    this.videoButton.childNodes[0].style.backgroundImage = "url('src/systems/ui/images/video-off.png')";
-                    this.jitsi.hideVideo();
-                });
-            });
-        } else {
-            faceTracker.stop().then(() => {
-                this.avatarButton.childNodes[0].style.backgroundImage = "url('src/systems/ui/images/avatar-off.png')";
-            });
-        }
-    },
-
-    onAVButtonClick() {
-        const { el } = this;
-
-        const { sceneEl } = el;
-
-        if (sceneEl.is('vr-mode') || sceneEl.is('ar-mode')) return;
-
-        window.setupAV(this.jitsi.avConnect.bind(this.jitsi));
-    },
-
     onSpeedButtonClick() {
         const { el } = this;
 
@@ -595,55 +410,6 @@ AFRAME.registerSystem('arena-side-menu-ui', {
         }
         cameraEl.setAttribute('wasd-controls', { fly: this.flying });
         cameraEl.setAttribute('press-and-move', { fly: this.flying });
-    },
-
-    onScreenshareButtonClick() {
-        const { el } = this;
-
-        const { sceneEl } = el;
-        const cameraEl = sceneEl.camera.el;
-
-        if (sceneEl.is('vr-mode') || sceneEl.is('ar-mode')) return;
-
-        Swal.fire({
-            title: 'You clicked on screen share! Are you sure you want to share your screen?',
-            html: `In order to share your screen, ARENA will open a new tab.<br>
-                <i>Make sure you have screen share permissions enabled for this browser!</i>`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Yes',
-            reverseButtons: true,
-        }).then((result) => {
-            if (!result.isConfirmed) return;
-
-            Swal.fire({
-                title: 'Select the object(s) you want to screenshare on:',
-                html: document.querySelector('a-scene').systems.screenshareable.asHTMLSelect(),
-                focusConfirm: false,
-                preConfirm: () =>
-                    Array.from(
-                        document.getElementById('screenshareables').querySelectorAll('option:checked'),
-                        (e) => e.value
-                    ),
-                showCancelButton: true,
-                reverseButtons: true,
-            }).then((res) => {
-                if (!res.isConfirmed || res.value.length === 0) return;
-                const objectIds = res.value;
-
-                const screenshareWindow = window.open('./screenshare', '_blank');
-                screenshareWindow.params = {
-                    connectOptions: this.jitsi.connectOptions,
-                    appID: this.jitsi.data.arenaAppId,
-                    token: this.arena.mqttToken,
-                    screenSharePrefix: this.jitsi.data.screensharePrefix,
-                    conferenceName: this.jitsi.conferenceName,
-                    displayName: cameraEl.getAttribute('arena-camera').displayName,
-                    camName: this.arena.camName,
-                    objectIds: objectIds.join(),
-                };
-            });
-        });
     },
 
     onLogoutButtonClick() {
