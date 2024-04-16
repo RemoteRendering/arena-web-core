@@ -356,6 +356,7 @@ AFRAME.registerSystem('arena-side-menu-ui', {
     },
 
     onSpeedButtonClick() {
+        console.log("Yes, my changes are here!!!");
         const { el } = this;
 
         const { sceneEl } = el;
