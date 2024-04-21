@@ -54,7 +54,7 @@ AFRAME.registerComponent('arena-camera', {
 
         this.arena = sceneEl.systems['arena-scene'];
         this.mqtt = sceneEl.systems['arena-mqtt'];
-        this.jitsi = sceneEl.systems['arena-jitsi'];
+        /*this.jitsi = sceneEl.systems['arena-jitsi'];*/
 
         this.lastPos = new THREE.Vector3();
         this.vioMatrix = new THREE.Matrix4();
@@ -139,12 +139,12 @@ AFRAME.registerComponent('arena-camera', {
             arenaUser.presence = presence.value;
         }
 
-        if (this.jitsi.initialized) {
+     /*   if (this.jitsi.initialized) {
             arenaUser.jitsiId = this.jitsi.getJitsiId();
             arenaUser.hasAudio = this.jitsi.hasAudio;
             arenaUser.hasVideo = this.jitsi.hasVideo;
         }
-
+*/
         const faceTracker = document.querySelector('a-scene').systems['face-tracking'];
         if (faceTracker && faceTracker.isEnabled()) {
             arenaUser.hasAvatar = faceTracker.isRunning();
@@ -277,11 +277,11 @@ AFRAME.registerComponent('arena-camera', {
         if (
             !this.videoDefaultResolutionSet &&
             ARENA &&
-            this.jitsi.initialized &&
+           /* this.jitsi.initialized && */
             this.arena.videoDefaultResolutionConstraint
         ) {
             // set scene-options, videoDefaultResolutionConstraint, only once
-            this.jitsi.setDefaultResolutionRemotes(this.arena.videoDefaultResolutionConstraint);
+            //this.jitsi.setDefaultResolutionRemotes(this.arena.videoDefaultResolutionConstraint);
             this.videoDefaultResolutionSet = true;
         }
     },
