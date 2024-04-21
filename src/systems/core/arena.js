@@ -256,16 +256,25 @@ AFRAME.registerSystem('arena-scene', {
      * Important: Also sets amName, faceName, handLName, handRName which depend on idTag
      * @param {string} idTag user name to set; will use url parameter value or default is no name is given
      */
-    setIdTag(idTag) {
-        if (idTag === undefined) throw new Error('setIdTag: idTag not defined.'); // idTag must be set
-        this.idTag = idTag;
+   
+setIdTag(idTag) {
+    if (idTag === undefined) {
+        console.error('setIdTag: idTag is undefined, using default "unknown_user".');
+        idTag = 'unknown_user'; // Set a default idTag if none provided
+    }
+    this.idTag = idTag;
 
-        // set camName
-        this.camName = `camera_${this.idTag}`; // e.g. camera_1234_eric
-        // if fixedCamera is given, then camName must be set accordingly
-        if (this.params.fixedCamera) {
-            this.camName = this.params.fixedCamera;
-        }
+    // Set camera name based on idTag
+    this.camName = `camera_${this.idTag}`; // e.g., camera_unknown_user if idTag was undefined
+
+    // If a fixedCamera is specified, override the camName with the fixedCamera value
+    if (this.params.fixedCamera) {
+        this.camName = this.params.fixedCamera;
+    }
+
+    // Debugging output to verify the camera name is set correctly
+    console.log(`Camera Name Set To: ${this.camName}`);
+
 
         // set faceName, avatarName, handLName, handRName which depend on user name
         this.faceName = `face_${this.idTag}`; // e.g. face_9240_X

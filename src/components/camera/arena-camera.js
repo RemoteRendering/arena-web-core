@@ -59,7 +59,7 @@ AFRAME.registerComponent('arena-camera', {
         this.lastPos = new THREE.Vector3();
         this.vioMatrix = new THREE.Matrix4();
         this.camParent = new THREE.Matrix4();
-        this.cam = new THREE.Matrix4();
+        this.cam = new THREE.Matrix4(); 
         this.cpi = new THREE.Matrix4();
 
         // instantiate frustum objs
